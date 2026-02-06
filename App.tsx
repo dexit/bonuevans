@@ -26,6 +26,30 @@ import { InputGroup } from './components/InputGroup';
 import { MetricCard } from './components/MetricCard';
 import { RiskScoreTable } from './components/RiskScoreTable';
 
+// Helper component to render simple markdown (bold and newlines)
+const SimpleMarkdownRenderer: React.FC<{ content: string }> = ({ content }) => {
+  if (!content) return null;
+  
+  // Split into paragraphs based on double newlines to preserve spacing
+  return (
+    <>
+      {content.split('\n\n').map((paragraph, pIndex) => (
+        <p key={pIndex} className="mb-3 last:mb-0">
+          {paragraph.split('\n').map((line, lIndex, lineArr) => (
+            <React.Fragment key={lIndex}>
+              {line.split('**').map((part, partIndex) =>
+                partIndex % 2 === 1 ? <strong key={partIndex}>{part}</strong> : part
+              )}
+              {lIndex < lineArr.length - 1 && <br />}
+            </React.Fragment>
+          ))}
+        </p>
+      ))}
+    </>
+  );
+};
+
+
 const App: React.FC = () => {
   const [inputs, setInputs] = useState<BonusInputs>(DEFAULT_INPUTS);
   const [results, setResults] = useState<SimulationResult | null>(null);
@@ -307,7 +331,7 @@ const App: React.FC = () => {
                       )}
                     </div>
 
-                    <div className="relative z-10 flex-1 overflow-y-auto max-h-48">
+                    <div className="relative z-10 flex-1 overflow-y-auto max-h-48 text-sm leading-relaxed opacity-90 pr-2">
                       {analysisStatus === AnalysisStatus.LOADING && (
                         <div className="flex flex-col items-center justify-center h-full animate-pulse">
                           <Dna size={24} className="mb-2 animate-spin" />
@@ -316,13 +340,11 @@ const App: React.FC = () => {
                       )}
                       
                       {analysisStatus === AnalysisStatus.SUCCESS && (
-                        <div className="text-sm leading-relaxed opacity-90">
-                          {analysis}
-                        </div>
+                        <SimpleMarkdownRenderer content={analysis} />
                       )}
 
                       {analysisStatus === AnalysisStatus.IDLE && (
-                        <p className="text-sm opacity-70">
+                        <p>
                           Click generate to receive an AI-powered breakdown of the risk profile and strategic recommendations for this bonus configuration.
                         </p>
                       )}
