@@ -93,16 +93,16 @@ const App: React.FC = () => {
 
   const handleCalculate = useCallback(() => {
     setIsCalculating(true);
-    setTimeout(() => {
-      const simResults = runSimulation(inputs);
-      setResults(simResults);
-      setAnalysis(''); 
-      setAnalysisStatus(AnalysisStatus.IDLE);
-      setIsCalculating(false);
-    }, 150);
+    // Standard simulation
+    const simResults = runSimulation(inputs);
+    setResults(simResults);
+    setIsCalculating(false);
   }, [inputs]);
 
-  useEffect(() => { handleCalculate(); }, []);
+  // Recalculate on any input change for real-time risk index
+  useEffect(() => { 
+    handleCalculate(); 
+  }, [handleCalculate]);
 
   const handleAnalysis = async () => {
     if (!results) return;

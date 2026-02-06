@@ -80,32 +80,38 @@ export const runSimulation = (inputs: BonusInputs): SimulationResult => {
       case 'HOLD_PERCENT':
         actual = (deposit + bonusAmount - avgEnd) / (avgWagered || 1);
         formulaString = "(D + B - End) / Wagered";
+        // Penalty if hold is too low
         score = actual < m.target ? 2 : 0;
         break;
       case 'BONUS_COST':
         actual = bonusAmount / (avgWagered || 1);
         formulaString = "Bonus / Wagered";
+        // Penalty if bonus cost is too high
         score = actual > m.target ? 3 : 0;
         break;
       case 'CANNIBALIZATION':
         actual = bonusAmount / (deposit || 1);
         formulaString = "Bonus / Deposit";
+        // Penalty if matching too much deposit
         score = actual > m.target ? 4 : 0;
         break;
       case 'NET_CONTRIBUTION':
         actual = -ev;
         formulaString = "NGR - Bonus Cost";
-        score = ev > 0 ? 5 : 0;
+        // Penalty if EV is positive (operator loss)
+        score = ev > m.target ? 5 : 0;
         break;
       case 'CHURN_PROB':
         actual = bustRate;
         formulaString = "P(Balance = 0)";
+        // Penalty if player busts too easily
         score = actual > m.target ? 2 : 0;
         break;
       case 'ROI_PERCENT':
         actual = ev / (deposit || 1);
         formulaString = "EV / Deposit";
-        score = actual > m.target ? 0 : 3;
+        // Penalty if ROI is too high for player
+        score = actual > m.target ? 3 : 0;
         break;
     }
 
