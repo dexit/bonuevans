@@ -1,44 +1,52 @@
 
 export type BonusMode = 'casino' | 'sportsbook';
 
+export type MetricBaseFormula = 
+  | 'HOLD_PERCENT' 
+  | 'BONUS_COST' 
+  | 'CANNIBALIZATION' 
+  | 'NET_CONTRIBUTION' 
+  | 'CHURN_PROB' 
+  | 'ROI_PERCENT';
+
+export interface MetricConfig {
+  id: string;
+  name: string;
+  formulaType: MetricBaseFormula;
+  target: number;
+  weight: number;
+  isCurrency?: boolean;
+  isPercentage?: boolean;
+}
+
 export interface BonusInputs {
   mode: BonusMode;
   deposit: number;
   matchPercent: number;
   matchUpTo: number;
   wagerMultiplier: number;
-  rtp: number; // Percentage 0-100
-  volatility: number; // 0-1
-  riskScore: number; // 1-10 (Aggression)
+  rtp: number;
+  volatility: number;
+  riskScore: number;
   loopLimit: number;
-  metricWeights: { [key: string]: number };
-  metricTargets: { [key: string]: number };
-  
-  // New inputs
   manualBetSize: number;
   useManualBet: boolean;
-  
-  // Sportsbook specific
   minOdds: number;
   isFreeBet: boolean;
   bookieMargin: number;
+  metrics: MetricConfig[];
 }
 
-export interface RiskMetric {
-  name: string;
+export interface RiskMetric extends MetricConfig {
   actual: number;
-  target: number;
-  formula: string;
+  formulaString: string;
   score: number;
-  weight: number;
-  isCurrency?: boolean;
-  isPercentage?: boolean;
 }
 
 export interface SimulationResult {
   ev: number;
-  winRate: number; // % of times wager completed
-  bustRate: number; // % of times balance hit 0
+  winRate: number;
+  bustRate: number;
   averageEndBalance: number;
   medianEndBalance: number;
   minBalance: number;

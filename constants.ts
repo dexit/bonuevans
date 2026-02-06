@@ -1,4 +1,13 @@
-import { BonusInputs } from './types';
+
+import { BonusInputs, MetricConfig } from './types';
+
+export const DEFAULT_METRICS: MetricConfig[] = [
+  { id: 'm1', name: 'Hold %', formulaType: 'HOLD_PERCENT', target: 0.065, weight: 1, isPercentage: true },
+  { id: 'm2', name: 'Bonus Cost', formulaType: 'BONUS_COST', target: 0.35, weight: 1, isPercentage: true },
+  { id: 'm3', name: 'Cannibalization', formulaType: 'CANNIBALIZATION', target: 0.15, weight: 1, isPercentage: true },
+  { id: 'm4', name: 'VIP Net Contribution', formulaType: 'NET_CONTRIBUTION', target: 0, weight: 1, isCurrency: true },
+  { id: 'm5', name: 'Churn risk', formulaType: 'CHURN_PROB', target: 0.08, weight: 1, isPercentage: true },
+];
 
 export const DEFAULT_INPUTS: BonusInputs = {
   mode: 'casino',
@@ -15,29 +24,16 @@ export const DEFAULT_INPUTS: BonusInputs = {
   minOdds: 1.8,
   isFreeBet: false,
   bookieMargin: 5,
-  metricWeights: {
-    'Hold %': 1,
-    'Bonus Cost': 1,
-    'Cannibalization': 1,
-    'VIP Net Contribution': 1,
-    'Churn 30d': 1,
-  },
-  metricTargets: {
-    'Hold %': 0.065,
-    'Bonus Cost': 0.35,
-    'Cannibalization': 0.15,
-    'VIP Net Contribution': 0,
-    'Churn 30d': 0.08,
-  }
+  metrics: DEFAULT_METRICS
 };
 
 export const SIMULATION_ITERATIONS = 2000;
 export const CHART_COLORS = {
-  primary: '#10b981', // Emerald 500
-  secondary: '#6366f1', // Indigo 500
-  danger: '#ef4444', // Red 500
-  warning: '#f59e0b', // Amber 500
-  neutral: '#64748b', // Slate 500
+  primary: '#10b981',
+  secondary: '#6366f1',
+  danger: '#ef4444',
+  warning: '#f59e0b',
+  neutral: '#64748b',
 };
 
 export const MODEL_NAME = 'gemini-3-flash-preview';
