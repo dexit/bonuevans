@@ -1,14 +1,15 @@
 
 import React from 'react';
 import { RiskMetric } from '../types';
-import { AlertTriangle, CheckCircle, Info } from 'lucide-react';
+import { AlertTriangle, Info } from 'lucide-react';
 
 interface RiskScoreTableProps {
   metrics: RiskMetric[];
   compositeScore: number;
+  onWeightChange: (metricName: string, newWeight: number) => void;
 }
 
-export const RiskScoreTable: React.FC<RiskScoreTableProps> = ({ metrics, compositeScore }) => {
+export const RiskScoreTable: React.FC<RiskScoreTableProps> = ({ metrics, compositeScore, onWeightChange }) => {
   const formatValue = (metric: RiskMetric, val: number) => {
     if (metric.isCurrency) return `€${val.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
     if (metric.isPercentage) return `${(val * 1).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 })}`;
@@ -24,7 +25,7 @@ export const RiskScoreTable: React.FC<RiskScoreTableProps> = ({ metrics, composi
         </div>
         <div className="flex items-center gap-2 text-xs text-gray-500">
           <Info size={14} />
-          <span>Calculated per simulation run</span>
+          <span>Press 'Calculate' to apply new weights</span>
         </div>
       </div>
       
@@ -36,6 +37,7 @@ export const RiskScoreTable: React.FC<RiskScoreTableProps> = ({ metrics, composi
               <th className="px-6 py-3 border-b border-gray-100">Actual</th>
               <th className="px-6 py-3 border-b border-gray-100">Target</th>
               <th className="px-6 py-3 border-b border-gray-100">Risk Formula</th>
+              <th className="px-4 py-3 border-b border-gray-100 text-center">Weight</th>
               <th className="px-6 py-3 border-b border-gray-100 text-right">Risk Score</th>
             </tr>
           </thead>
@@ -54,6 +56,17 @@ export const RiskScoreTable: React.FC<RiskScoreTableProps> = ({ metrics, composi
                   <td className="px-6 py-4 text-xs font-medium text-blue-600 bg-blue-50/30 group-hover:bg-blue-50 transition-colors">
                     {m.formula}
                   </td>
+                  <td className="px-4 py-2 text-center">
+                    <input
+                      type="number"
+                      value={m.weight}
+                      onChange={(e) => onWeightChange(m.name, parseFloat(e.target.value) || 0)}
+                      className="w-20 p-1 text-center bg-white border border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
+                      min="0"
+                      step="0.1"
+                      aria-label={`${m.name} weight`}
+                    />
+                  </td>
                   <td className="px-6 py-4 text-sm text-right">
                     <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full font-bold text-xs ${
                       m.score > 3 ? 'bg-red-100 text-red-700' : 
@@ -69,7 +82,7 @@ export const RiskScoreTable: React.FC<RiskScoreTableProps> = ({ metrics, composi
           </tbody>
           <tfoot>
             <tr className="bg-slate-900 text-white">
-              <td colSpan={4} className="px-6 py-4 text-sm font-bold uppercase tracking-widest">
+              <td colSpan={5} className="px-6 py-4 text-sm font-bold uppercase tracking-widest">
                 Composite Risk Score
               </td>
               <td className="px-6 py-4 text-right">

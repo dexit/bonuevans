@@ -4,23 +4,20 @@ import {
   Calculator, 
   TrendingUp, 
   ShieldAlert, 
-  RotateCcw, 
   BrainCircuit, 
   Target, 
-  Percent, 
   DollarSign, 
   Activity,
   Dna,
   Menu,
   ChevronDown,
   Save,
-  Gamepad2,
   Trophy,
   Landmark,
   Sparkles,
   BarChart3
 } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { BonusInputs, SimulationResult, AnalysisStatus } from './types';
 import { DEFAULT_INPUTS, CHART_COLORS } from './constants';
 import { runSimulation, generateHistogramData } from './utils/simulator';
@@ -44,6 +41,16 @@ const App: React.FC = () => {
     }));
   };
 
+  const handleWeightChange = (metricName: string, newWeight: number) => {
+    setInputs(prev => ({
+      ...prev,
+      metricWeights: {
+        ...prev.metricWeights,
+        [metricName]: newWeight,
+      },
+    }));
+  };
+
   const handleCalculate = useCallback(() => {
     const simResults = runSimulation(inputs);
     setResults(simResults);
@@ -53,6 +60,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     handleCalculate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleAnalysis = async () => {
@@ -325,7 +333,8 @@ const App: React.FC = () => {
                 {/* New Risk Matrix Table */}
                 <RiskScoreTable 
                   metrics={results.riskMetrics} 
-                  compositeScore={results.compositeRiskScore} 
+                  compositeScore={results.compositeRiskScore}
+                  onWeightChange={handleWeightChange}
                 />
               </>
             )}

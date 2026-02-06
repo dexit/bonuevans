@@ -11,7 +11,8 @@ export const runSimulation = (inputs: BonusInputs): SimulationResult => {
     rtp,
     volatility,
     riskScore,
-    loopLimit
+    loopLimit,
+    metricWeights
   } = inputs;
 
   const bonusAmount = Math.min(deposit * (matchPercent / 100), matchUpTo);
@@ -64,56 +65,61 @@ export const runSimulation = (inputs: BonusInputs): SimulationResult => {
   const avgEnd = totalEndBalance / SIMULATION_ITERATIONS;
   const ev = avgEnd - deposit;
 
-  // Calculation of Operator Risk Metrics (Placeholder logic to be refined by Excel formulas)
+  // Calculation of Operator Risk Metrics
   const avgWagered = totalWageredGlobal / SIMULATION_ITERATIONS;
   const holdActual = (deposit + bonusAmount - avgEnd) / (avgWagered || 1);
   const bonusCostActual = bonusAmount / (avgWagered || 1);
-  const cannibalizationActual = (bonusAmount / startBankroll) * 0.85; // Heuristic
+  const cannibalizationActual = bonusAmount / (deposit || 1);
   
   const riskMetrics: RiskMetric[] = [
     {
       name: 'Hold %',
       actual: holdActual,
       target: 0.065,
-      formula: '1-RTP',
+      formula: '1 - RTP',
       score: holdActual < 0.065 ? 2 : 0,
+      weight: metricWeights['Hold %'] ?? 1,
       isPercentage: true
     },
     {
       name: 'Bonus Cost',
       actual: bonusCostActual,
       target: 0.35,
-      formula: 'B/W',
+      formula: 'B / Wagered',
       score: bonusCostActual > 0.35 ? 3 : 0,
+      weight: metricWeights['Bonus Cost'] ?? 1,
       isPercentage: true
     },
     {
       name: 'Cannibalization',
       actual: cannibalizationActual,
       target: 0.15,
-      formula: 'B/Cash',
+      formula: 'B / Cash Deposit',
       score: cannibalizationActual > 0.15 ? 4 : 0,
+      weight: metricWeights['Cannibalization'] ?? 1,
       isPercentage: true
     },
     {
       name: 'VIP Net Contribution',
-      actual: ev * -100, // Scaled for demo
+      actual: -ev,
       target: 0,
-      formula: 'NGR-Cost',
+      formula: 'NGR - Cost ≈ -EV',
       score: ev > 0 ? 5 : 0,
+      weight: metricWeights['VIP Net Contribution'] ?? 1,
       isCurrency: true
     },
     {
       name: 'Churn 30d',
-      actual: 0.11,
+      actual: 0.11, // This remains a placeholder
       target: 0.08,
       formula: 'P(Bust)',
       score: 1,
+      weight: metricWeights['Churn 30d'] ?? 1,
       isPercentage: true
     }
   ];
 
-  const compositeRiskScore = riskMetrics.reduce((sum, m) => sum + m.score, 0);
+  const compositeRiskScore = riskMetrics.reduce((sum, m) => sum + (m.score * m.weight), 0);
 
   return {
     ev,

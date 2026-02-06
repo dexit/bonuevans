@@ -9,6 +9,13 @@ export const DEFAULT_INPUTS: BonusInputs = {
   volatility: 0.5,
   riskScore: 5,
   loopLimit: 1000,
+  metricWeights: {
+    'Hold %': 1,
+    'Bonus Cost': 1,
+    'Cannibalization': 1,
+    'VIP Net Contribution': 1,
+    'Churn 30d': 1,
+  },
 };
 
 export const SIMULATION_ITERATIONS = 2000;

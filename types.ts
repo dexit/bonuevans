@@ -8,6 +8,7 @@ export interface BonusInputs {
   volatility: number; // 0-1
   riskScore: number; // 1-10 (Aggression)
   loopLimit: number;
+  metricWeights: { [key: string]: number };
 }
 
 export interface RiskMetric {
@@ -16,6 +17,7 @@ export interface RiskMetric {
   target: number;
   formula: string;
   score: number;
+  weight: number;
   isCurrency?: boolean;
   isPercentage?: boolean;
 }
