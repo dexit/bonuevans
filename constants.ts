@@ -1,6 +1,7 @@
 import { BonusInputs } from './types';
 
 export const DEFAULT_INPUTS: BonusInputs = {
+  mode: 'casino',
   deposit: 100,
   matchPercent: 100,
   matchUpTo: 500,
@@ -8,7 +9,12 @@ export const DEFAULT_INPUTS: BonusInputs = {
   rtp: 96.5,
   volatility: 0.5,
   riskScore: 5,
-  loopLimit: 1000,
+  loopLimit: 1500,
+  manualBetSize: 2,
+  useManualBet: false,
+  minOdds: 1.8,
+  isFreeBet: false,
+  bookieMargin: 5,
   metricWeights: {
     'Hold %': 1,
     'Bonus Cost': 1,
@@ -16,6 +22,13 @@ export const DEFAULT_INPUTS: BonusInputs = {
     'VIP Net Contribution': 1,
     'Churn 30d': 1,
   },
+  metricTargets: {
+    'Hold %': 0.065,
+    'Bonus Cost': 0.35,
+    'Cannibalization': 0.15,
+    'VIP Net Contribution': 0,
+    'Churn 30d': 0.08,
+  }
 };
 
 export const SIMULATION_ITERATIONS = 2000;

@@ -1,5 +1,8 @@
 
+export type BonusMode = 'casino' | 'sportsbook';
+
 export interface BonusInputs {
+  mode: BonusMode;
   deposit: number;
   matchPercent: number;
   matchUpTo: number;
@@ -9,6 +12,16 @@ export interface BonusInputs {
   riskScore: number; // 1-10 (Aggression)
   loopLimit: number;
   metricWeights: { [key: string]: number };
+  metricTargets: { [key: string]: number };
+  
+  // New inputs
+  manualBetSize: number;
+  useManualBet: boolean;
+  
+  // Sportsbook specific
+  minOdds: number;
+  isFreeBet: boolean;
+  bookieMargin: number;
 }
 
 export interface RiskMetric {
@@ -33,15 +46,16 @@ export interface SimulationResult {
   resultsDistribution: number[]; 
   theoreticalCost: number;
   wagerCompletedAvg: number;
-  // New Operator Risk Metrics
   riskMetrics: RiskMetric[];
   compositeRiskScore: number;
+  totalWageringRequired: number;
 }
 
-export interface ChartDataPoint {
-  range: string;
-  count: number;
-  value: number;
+export interface Preset {
+  id: string;
+  name: string;
+  inputs: BonusInputs;
+  timestamp: number;
 }
 
 export enum AnalysisStatus {
