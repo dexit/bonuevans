@@ -1,0 +1,5 @@
+{
+  "name": "BonusEvans - Casino Bonus Simulator",
+  "description": "A professional-grade Monte Carlo simulation tool for analyzing casino bonus Expected Value (EV), variance, and risk of ruin for both players and operators. Features AI-powered analysis.",
+  "requestFramePermissions": []
+}
